@@ -8,9 +8,13 @@ use App\Http\Filters\ItemFilter;
 
 class Item extends Model
 {
-    protected $fillable = [
-        'name',
-    ];
+    protected $guarded = [];
+
+    public static function rules() {
+        return [
+            'name' => 'required',
+        ];
+    }
 
     public function scopeFilter($builder, ItemFilter $filter)
     {

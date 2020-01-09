@@ -11,6 +11,8 @@ class ItemTest extends TestCase
 {
     use RefreshDatabase;
 
+    // *** items.index ***
+
     /** @test */
     public function a_user_can_list_items()
     {
@@ -81,6 +83,8 @@ class ItemTest extends TestCase
             ]);
     }
 
+    // *** items.show ***
+
     /** @test */
     public function a_user_can_view_an_item()
     {
@@ -90,6 +94,23 @@ class ItemTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'data' => $item->toArray(),
+            ]);
+    }
+
+    // *** items.store ***
+
+    /**  @test */
+    public function create_an_item_requires_valid_fields()
+    {
+        $this->json('POST', "/api/items", [])
+            ->assertStatus(422)
+            ->assertJson([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'name' => [
+                        'The name field is required.'
+                    ],
+                ],
             ]);
     }
 
@@ -112,6 +133,8 @@ class ItemTest extends TestCase
         $this->assertDatabaseHas("items", $item->toArray());
     }
 
+    // *** items.update ***
+
     /** @test */
     public function a_user_can_update_an_item()
     {
@@ -132,6 +155,8 @@ class ItemTest extends TestCase
 
         $this->assertDatabaseHas("items", $update_data->toArray());
     }
+
+    // *** items.destroy ***
 
     /** @test */
     public function a_user_can_delete_an_item()

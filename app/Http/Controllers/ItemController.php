@@ -27,9 +27,9 @@ class ItemController extends Controller
 
     public function store(Request $request)
     {
-        $input = $request->all();
+        $validator = $this->validate(request(), Item::rules());
 
-        $created = Item::create($input);
+        $created = Item::create($validator);
 
         return new ItemResource($created);
     }
