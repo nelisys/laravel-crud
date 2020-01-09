@@ -36,9 +36,9 @@ class ItemController extends Controller
 
     public function update(Request $request, Item $item)
     {
-        $input = $request->all();
+        $validator = $this->validate(request(), Item::rules());
 
-        $item->update($input);
+        $item->update($validator);
 
         return new ItemResource($item);
     }

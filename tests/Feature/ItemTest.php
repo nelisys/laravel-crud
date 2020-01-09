@@ -135,6 +135,41 @@ class ItemTest extends TestCase
 
     // *** items.update ***
 
+    /**  @test */
+    public function update_an_item_requires_valid_fields()
+    {
+        $item = factory(Item::class)->create();
+
+        $data = [];
+
+        $this->json('PUT', "/api/items/{$item->id}", $data)
+            ->assertStatus(422)
+            ->assertJson([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'name' => [
+                        'The name field is required.'
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function user_can_submit_update_with_no_changes()
+    {
+        $item = factory(Item::class)->create();
+
+        $this->json('PUT', "/api/items/{$item->id}", $item->toArray())
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                ],
+            ]);
+
+        $this->assertDatabaseHas("items", $item->toArray());
+    }
+
     /** @test */
     public function a_user_can_update_an_item()
     {
@@ -142,7 +177,7 @@ class ItemTest extends TestCase
 
         $update_data = factory(Item::class)->make();
 
-        $this->json('PATCH', "/api/items/{$item->id}", $update_data->toArray())
+        $this->json('PUT', "/api/items/{$item->id}", $update_data->toArray())
             ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
