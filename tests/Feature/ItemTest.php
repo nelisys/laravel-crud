@@ -39,6 +39,49 @@ class ItemTest extends TestCase
     }
 
     /** @test */
+    public function a_user_can_filter_items()
+    {
+        $filters = [
+            'name',
+        ];
+
+        $item_a1 = factory(Item::class)->create(['name' => 'aaa-01']);
+        $item_b1 = factory(Item::class)->create(['name' => 'bbb-01']);
+        $item_b2 = factory(Item::class)->create(['name' => 'bbb-02']);
+        $item_c1 = factory(Item::class)->create(['name' => 'ccc-01']);
+
+        $expectedData = [
+            [
+                'name' => $item_b1->name,
+            ],
+            [
+                'name' => $item_b2->name,
+            ],
+        ];
+
+        $this->json('GET', "/api/items?name=bbb&sort=name&order=asc")
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $expectedData,
+                'links' => [
+                    'first' => env('APP_URL') . "/api/items?page=1",
+                    'last' => env('APP_URL') . "/api/items?page=1",
+                    'prev' => null,
+                    'next' => null
+                ],
+                'meta' => [
+                    'current_page' => 1,
+                    'from' => 1,
+                    'last_page' => 1,
+                    'path' => env('APP_URL') . '/api/items',
+                    'per_page' => 15,
+                    'to' => 2,
+                    'total' => 2,
+                ],
+            ]);
+    }
+
+    /** @test */
     public function a_user_can_view_an_item()
     {
         $item = factory(Item::class)->create();

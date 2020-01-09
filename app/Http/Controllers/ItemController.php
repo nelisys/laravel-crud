@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Item;
+use App\Http\Filters\ItemFilter;
 use App\Http\Resources\ItemCollection;
 use App\Http\Resources\ItemResource;
 
@@ -12,7 +13,9 @@ class ItemController extends Controller
 {
     public function index()
     {
-        $items = Item::paginate();
+        $items = Item::filter(new ItemFilter());
+
+        $items = $items->paginate();
 
         return ItemResource::collection($items);
     }
