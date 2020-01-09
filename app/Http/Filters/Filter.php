@@ -6,16 +6,7 @@ use Illuminate\Http\Request;
 
 abstract class Filter
 {
-    protected $request;
-
     protected $builder;
-
-    protected $filters = [];
-
-    public function __construct()
-    {
-        $this->request = request();
-    }
 
     public function apply($builder)
     {
@@ -36,6 +27,11 @@ abstract class Filter
 
     protected function getFilters()
     {
-        return $this->request->toArray();
+        return request()->toArray();
+    }
+
+    protected function sort($sort)
+    {
+        return $this->builder->orderBy($sort, request('order', 'asc'));
     }
 }
